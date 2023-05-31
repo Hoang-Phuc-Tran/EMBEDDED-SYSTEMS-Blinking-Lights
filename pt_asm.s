@@ -167,7 +167,7 @@ count: .word 12345 @ This is an initialized 32 bit value
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@   Assignment 3 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    ptGame_A3:
+ptGame_A3:
     push {r4 - r10, lr}
     mov r6, #10000          
     mul r0,r0, r6       @ Convert delay to milliseconds
@@ -178,9 +178,9 @@ count: .word 12345 @ This is an initialized 32 bit value
     mov r8, r2          @ move the target value to r8
     mov r9, #7          @ The index for turnning off the LEDs
     
-    @ This loop is used to toggle the LEDs with pattern string
-    @ And check if user presses the buttion
-    loop_main:
+@ This loop is used to toggle the LEDs with pattern string
+@ And check if user presses the buttion
+loop_main:
     ldrb r4, [r7,r5]    @ Load the value of the pattern string at offset r5 and put it in r4 register
     cmp r4, #0          @ Check if it reaches the null character
     beq reset_pattern   @ If r == 0, we reset the pattern to loop again
@@ -209,61 +209,73 @@ count: .word 12345 @ This is an initialized 32 bit value
     b loop_main         @ back to loop_main
 
 
-    @ This part is used to reset the offset of the pattern string
-    reset_pattern:
+@ This part is used to reset the offset of the pattern string
+reset_pattern:
     mov r5, #0          @ move 0 to r5
     b loop_main         @ back to loop_main
 
-    check_winner:
-    cmp r8, r4
-    beq user_win
-    b user_loss
+@ This subroutine is used to check the user presses the LED target
+check_winner:
+    cmp r8, r4          @ compare the LEDs that user pressed with the LED target
+    beq user_win        @ if they are equal
+    b user_loss         @ if they are not equal
 
-    user_loss:
-    bl turn_off_LEDs
-    mov r0, r8
-    bl BSP_LED_Toggle
-    b exit_loop
+@ This subroutine is used when user losses the game
+@ It will turn on the LED target
+user_loss:
+    bl turn_off_LEDs    @ Call the turn_off_LEDs subroutine
 
-    user_win:
-    bl turn_on_LEDs
-    mov r9, #7
+    mov r0, r8          @ move the LED target to r0
+    bl BSP_LED_Toggle   @ Call the BSP_LED_Toggle   
+
+    b exit_loop         @ Exit the game
+
+@ This subroutine is used when user wins the game
+@ It will toggle all LEDs twice
+user_win:
+    bl turn_on_LEDs     @ call turn_on_LEDs subroutine
+    mov r9, #7          @ reset The index for turnning on the LEDs
 
     mov r0, r6          @ Move the value of delay to r0
-    bl busy_delay       @ call the busu_delay
+    bl busy_delay       @ call the busy_delay
 
-    bl turn_off_LEDs
-    mov r9, #7
-     mov r0, r6          @ Move the value of delay to r0
-    bl busy_delay       @ call the busu_delay
+    bl turn_off_LEDs    @ call turn_off_LEDs subroutine
+    mov r9, #7          @ reset The index for turnning off the LEDs
 
-    bl turn_on_LEDs
-    mov r9, #7
-     mov r0, r6          @ Move the value of delay to r0
-    bl busy_delay       @ call the busu_delay
+    mov r0, r6          @ Move the value of delay to r0
+    bl busy_delay       @ call the busy_delay
 
-    bl turn_off_LEDs
-    b exit_loop
-    
-    turn_off_LEDs:
+    bl turn_on_LEDs     @ call turn_on_LEDs subroutine
+    mov r9, #7          @ reset The index for turnning on the LEDs
+
+    mov r0, r6          @ Move the value of delay to r0
+    bl busy_delay       @ call the busy_delay
+
+    bl turn_off_LEDs    @ call turn_off_LEDs subroutine
+    b exit_loop         @ Exit the game
+
+@ This subroutine is used to turn off all the LEDS    
+turn_off_LEDs:
     push {lr}
-    mov r0, r9
-    bl BSP_LED_Off
-    subs r9, r9, #1
-    bge turn_off_LEDs
+    mov r0, r9          @ mov the LED index to r0
+    bl BSP_LED_Off      @ call the BSP_LED_Off 
+    subs r9, r9, #1     @ decrease the index
+    bge turn_off_LEDs   @ Check if the index < 0
     pop {lr}
     bx lr
 
-    turn_on_LEDs:
+@ This subroutine is used to turn on all the LEDS    
+turn_on_LEDs:
     push {lr}
-    mov r0, r9
-    bl BSP_LED_On
-    subs r9, r9, #1
-    bge turn_on_LEDs
+    mov r0, r9          @ mov the LED index to r0
+    bl BSP_LED_On       @ call the BSP_LED_Off 
+    subs r9, r9, #1     @ decrease the index
+    bge turn_on_LEDs    @Check if the index < 0
     pop {lr}
     bx lr
 
-    exit_loop:
+@ Exit the game
+exit_loop:
     pop {r4 - r10, lr}
     bx lr
 

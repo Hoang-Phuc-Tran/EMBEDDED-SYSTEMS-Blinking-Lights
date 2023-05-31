@@ -177,31 +177,33 @@ count: .word 12345 @ This is an initialized 32 bit value
     mov r7, r1          @ move the pattern to r7
     mov r8, r2          @ move the target value to r8
 
+    @ This loop is used to toggle the LEDs with pattern string
+    @ And check if user presses the buttion
     loop_main:
-    ldrb r4, [r7,r5]    @ Load the value of big
-    cmp r4, #0
-    beq reset_pattern
+    ldrb r4, [r7,r5]    @ Load the value of the pattern string at offset r5 and put it in r4 register
+    cmp r4, #0          @ Check if it reaches the null character
+    beq reset_pattern   @ If r == 0, we reset the pattern to loop again
 
-    sub r4, r4, #48
+    sub r4, r4, #48     @ convert the byte to decimal
 
-    mov r0, r4
-    bl BSP_LED_Toggle
+    mov r0, r4          @ move a single character from the pattern string to r0
+    bl BSP_LED_Toggle   @ Toggle that LED
 
-    mov r0, r6
-    bl busy_delay
+    mov r0, r6          @ Move the value of delay to r0
+    bl busy_delay       @ call the busu_delay
 
-    mov r0, r4
-    bl BSP_LED_Toggle
+    mov r0, r4          @ move a single character from the pattern string to r0
+    bl BSP_LED_Toggle   @ Toggle that LED
 
 
     add r5, r5, #1      @ increase the index by 1
-    b loop_main
+    b loop_main         @ back to loop_main
 
 
-
+    @ This part is used to reset the offset of the pattern string
     reset_pattern:
-    mov r5, #0
-    b loop_main
+    mov r5, #0          @ move 0 to r5
+    b loop_main         @ back to loop_main
 
     exit_loop:
     pop {r4 - r10, lr}

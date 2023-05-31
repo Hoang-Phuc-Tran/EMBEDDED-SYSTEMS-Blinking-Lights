@@ -93,5 +93,62 @@ void _pt_A2(int action)
 ADD_CMD("a2demo", _pt_A2,"Toggles all 8 LEDs using a loop (default value: count: 1, delay: 0xFFFFFF)")
 
 
+/*********************************************************************************************/
+/*********************************************************************************************/
+/****************************** Assignment 3 *************************************************/
+/*********************************************************************************************/
+/*********************************************************************************************/
 
+// Function declaration
+int ptGame_A3(int delay, char *pattern, int target);
+
+/*
+* Function: _pt_A2
+* Description: Two integers from the user are required for this function. The first number 
+toggles the 8-led cycle, while the second number changes the busy_delay function's delay
+ between LEDs in accordance with the user-passed delay.
+* Parameters: an integer - int action
+* Returns: void
+*/
+void ptGame(int action)
+{
+    if(action==CMD_SHORT_HELP) return;
+    if(action==CMD_LONG_HELP) {
+        printf("Addition Test\n\n"
+        "This command tests new addition function\n"
+    );
+    return;
+    }
+
+    // delay input
+    uint32_t delay;
+    int fetch_status;
+    fetch_status = fetch_uint32_arg(&delay);
+    if(fetch_status) {
+    // Use a default delay value
+    delay = 500;
+    }
+
+    char *pattern;
+    int fetch_status1;
+    fetch_status1 = fetch_string_arg(&pattern);
+    if(fetch_status1) {
+    // Default logic here
+    pattern = "01234567";
+    }
+
+    // target input
+    uint32_t target;
+    int fetch_status2;  
+    fetch_status2 = fetch_uint32_arg(&target);
+    // check the target variable is valid or not
+    if(fetch_status2) {
+    // Use a default target value
+    target = 1;
+    }
+    
+    printf("ptGame_A3 returned: %d\n", ptGame_A3(delay, pattern, target) );
+}
+
+ADD_CMD("ptGame", ptGame,"<delay><patter><target>")
 

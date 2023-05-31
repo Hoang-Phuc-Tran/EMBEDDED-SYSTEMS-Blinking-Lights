@@ -162,6 +162,50 @@ count: .word 12345 @ This is an initialized 32 bit value
     bx lr                    @ Return (Branch eXchange) to the address in the link register (lr)
 
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   Assignment 3 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    ptGame_A3:
+    push {r4 - r10, lr}
+    mov r6, #10000          
+    mul r0,r0, r6       @ Convert delay to milliseconds
+
+    mov r5, #0          @ the index for pattern string
+    mov r6, r0          @ After convert, we put the delay in r6
+    mov r7, r1          @ move the pattern to r7
+    mov r8, r2          @ move the target value to r8
+
+    loop_main:
+    ldrb r4, [r7,r5]    @ Load the value of big
+    cmp r4, #0
+    beq reset_pattern
+
+    sub r4, r4, #48
+
+    mov r0, r4
+    bl BSP_LED_Toggle
+
+    mov r0, r6
+    bl busy_delay
+
+    mov r0, r4
+    bl BSP_LED_Toggle
+
+
+    add r5, r5, #1      @ increase the index by 1
+    b loop_main
+
+
+
+    reset_pattern:
+    mov r5, #0
+    b loop_main
+
+    exit_loop:
+    pop {r4 - r10, lr}
+    bx lr
 
     .size add_test, .-add_test @@ - symbol size (not strictly required, but makes the debugger happy)
 

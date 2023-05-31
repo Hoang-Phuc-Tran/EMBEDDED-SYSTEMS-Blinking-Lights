@@ -177,7 +177,7 @@ count: .word 12345 @ This is an initialized 32 bit value
     mov r7, r1          @ move the pattern to r7
     mov r8, r2          @ move the target value to r8
     mov r9, #7          @ The index for turnning off the LEDs
-
+    
     @ This loop is used to toggle the LEDs with pattern string
     @ And check if user presses the buttion
     loop_main:
@@ -226,6 +226,24 @@ count: .word 12345 @ This is an initialized 32 bit value
     b exit_loop
 
     user_win:
+    bl turn_on_LEDs
+    mov r9, #7
+
+    mov r0, r6          @ Move the value of delay to r0
+    bl busy_delay       @ call the busu_delay
+
+    bl turn_off_LEDs
+    mov r9, #7
+     mov r0, r6          @ Move the value of delay to r0
+    bl busy_delay       @ call the busu_delay
+
+    bl turn_on_LEDs
+    mov r9, #7
+     mov r0, r6          @ Move the value of delay to r0
+    bl busy_delay       @ call the busu_delay
+
+    bl turn_off_LEDs
+    b exit_loop
     
     turn_off_LEDs:
     push {lr}
@@ -233,6 +251,15 @@ count: .word 12345 @ This is an initialized 32 bit value
     bl BSP_LED_Off
     subs r9, r9, #1
     bge turn_off_LEDs
+    pop {lr}
+    bx lr
+
+    turn_on_LEDs:
+    push {lr}
+    mov r0, r9
+    bl BSP_LED_On
+    subs r9, r9, #1
+    bge turn_on_LEDs
     pop {lr}
     bx lr
 

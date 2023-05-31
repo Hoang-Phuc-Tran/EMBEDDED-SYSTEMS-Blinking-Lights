@@ -147,7 +147,8 @@ void ptGame(int action)
     target = 1;
     }
     
-    printf("ptGame_A3 returned: %d\n", ptGame_A3(delay, pattern, target) );
+    ptGame_A3(delay, pattern, target);
+    printf("Done!\n");
 }
 
 ADD_CMD("ptGame", ptGame,"<delay><patter><target>")

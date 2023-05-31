@@ -176,6 +176,7 @@ count: .word 12345 @ This is an initialized 32 bit value
     mov r6, r0          @ After convert, we put the delay in r6
     mov r7, r1          @ move the pattern to r7
     mov r8, r2          @ move the target value to r8
+    mov r9, #7          @ The index for turnning off the LEDs
 
     @ This loop is used to toggle the LEDs with pattern string
     @ And check if user presses the buttion
@@ -192,9 +193,17 @@ count: .word 12345 @ This is an initialized 32 bit value
     mov r0, r6          @ Move the value of delay to r0
     bl busy_delay       @ call the busu_delay
 
+    mov r0, #0          @ set the value of r0 to 0
+    bl BSP_PB_GetState  @ call BSP_PB_GetState
+
+    cmp r0, #1          @ check if button is pressed
+    beq check_winner    @ call the check_button subroutine to check if you user wins or losses
+
     mov r0, r4          @ move a single character from the pattern string to r0
     bl BSP_LED_Toggle   @ Toggle that LED
 
+    mov r0, r6          @ Move the value of delay to r0
+    bl busy_delay       @ call the busu_delay
 
     add r5, r5, #1      @ increase the index by 1
     b loop_main         @ back to loop_main
@@ -204,6 +213,28 @@ count: .word 12345 @ This is an initialized 32 bit value
     reset_pattern:
     mov r5, #0          @ move 0 to r5
     b loop_main         @ back to loop_main
+
+    check_winner:
+    cmp r8, r4
+    beq user_win
+    b user_loss
+
+    user_loss:
+    bl turn_off_LEDs
+    mov r0, r8
+    bl BSP_LED_Toggle
+    b exit_loop
+
+    user_win:
+    
+    turn_off_LEDs:
+    push {lr}
+    mov r0, r9
+    bl BSP_LED_Off
+    subs r9, r9, #1
+    bge turn_off_LEDs
+    pop {lr}
+    bx lr
 
     exit_loop:
     pop {r4 - r10, lr}

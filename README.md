@@ -1,5 +1,9 @@
 
-https://github.com/Hoang-Phuc-Tran/EMBEDDED-SYSTEMS-Blinking-Lights/assets/120700092/ed8a089c-a5dc-4bb3-8ed2-e37deb1702f3
+
+
+https://github.com/Hoang-Phuc-Tran/EMBEDDED-SYSTEMS-Blinking-Lights/assets/120700092/8102cba6-53ab-479c-99c1-da4d33c40de4
+
+
 
 # STM32 LED Game Project
 
